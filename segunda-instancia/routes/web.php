@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PedidoController;
 use App\Models\Joya;
+use Illuminate\Support\Facades\Auth;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -86,3 +87,37 @@ Route::post('/joyas/nuevo', function () {
     return redirect('/joyas');
 
 })->middleware('auth');
+// Mostrar formulario de inicio de sesión
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
+
+// Procesar inicio de sesión
+Route::post('/login', function (\Illuminate\Http\Request $request) {
+
+    $credentials = $request->validate([
+        'email' => 'required|email',
+        'password' => 'required'
+    ]);
+
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+
+        return redirect()->intended('/joyas');
+    }
+
+    return back()->withErrors([
+        'email' => 'El correo o la contraseña son incorrectos.'
+    ])->onlyInput('email');
+
+})->name('login.process');
+
+// Cerrar sesión
+Route::post('/logout', function (\Illuminate\Http\Request $request) {
+    Auth::logout();
+
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+
+    return redirect('/login');
+})->middleware('auth')->name('logout');

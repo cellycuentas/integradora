@@ -14,12 +14,28 @@
             <h2>💎 La Esmeralda</h2>
 
             <nav>
-                <ul>
-                    <li><a href="/joyas">Joyas</a></li>
-                    <li><a href="/joyas/nuevo">Registrar joya</a></li>
-                    <li><a href="/login">Entrar</a></li>
-                </ul>
-            </nav>
+    <ul>
+        <li><a href="/joyas">Joyas</a></li>
+
+        @auth
+            <li>
+                <a href="/joyas/nuevo">Registrar joya</a>
+            </li>
+
+            <li>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit">Cerrar sesión</button>
+                </form>
+            </li>
+        @else
+            <li>
+                <a href="{{ route('login') }}">Entrar</a>
+            </li>
+        @endauth
+
+    </ul>
+</nav>
 
             <button type="button" id="btn-oscuro">
                 Modo oscuro
